@@ -5,6 +5,7 @@ cc_binary(
     srcs = ["main.cpp"],
     deps = [
         "//:imgui",
-        "//engine/window_manager"
+        "//engine/window_manager",
+        "//engine/models/car_model"
     ],
 )

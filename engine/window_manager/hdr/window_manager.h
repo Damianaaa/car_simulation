@@ -9,28 +9,29 @@
 class WindowManager
 {
 private:
-    std::vector<std::shared_ptr<sf::Drawable>> textures_; // Who releases the memory?
+    std::vector<const sf::Drawable*> textures_; // Who releases the memory?
     sf::RenderWindow window_;
 
     bool isClosed()
     {
         sf::Event event;
+        bool is_closed{false};
         while (window_.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
-                return true;            
+                is_closed = true;            
         }
-        return false;
+        return is_closed;
     }
 
 public:
-    inline bool isOpen() const { return window_.isOpen(); }
-    inline void addTexture(const std::shared_ptr<sf::Drawable>& texture) { textures_.emplace_back(texture); }
+    bool isOpen() { return window_.isOpen() && !isClosed(); }
+    inline void addTexture(const sf::Drawable* texture) { textures_.emplace_back(texture); }
 
     void updateWindow() 
-    {   
+    {
         window_.clear();
-        for (const auto& texture: textures_)
+        for (const auto texture: textures_)
         {
             window_.draw(*texture);
         }
