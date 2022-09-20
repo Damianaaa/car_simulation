@@ -3,13 +3,13 @@
 
 #include <vector>
 #include <memory>
-
+#include <type_traits>
 #include <SFML/Graphics.hpp>
 
 class WindowManager
 {
 private:
-    std::vector<const sf::Drawable*> textures_; // Who releases the memory?
+    std::vector<std::shared_ptr<sf::Drawable>> textures_;
     sf::RenderWindow window_;
 
     bool isClosed()
@@ -26,20 +26,30 @@ private:
 
 public:
     bool isOpen() { return window_.isOpen() && !isClosed(); }
-    inline void addTexture(const sf::Drawable* texture) { textures_.emplace_back(texture); }
+    inline void addTexture(const std::shared_ptr<sf::Drawable> texture) { textures_.emplace_back(texture); }
+
+    template<typename T>
+    void addDrawableVector(const std::vector<std::shared_ptr<T>>& drawables) 
+    {
+        if (std::is_base_of_v<sf::Drawable, T>)
+        std::for_each(drawables.cbegin(), drawables.cend(), [&textures = textures_](const auto drawable)
+            { textures.push_back(drawable); });
+        else
+        {
+            std::cerr << "Type is not derived from sf::Drawable\n";
+        }
+    }
 
     void updateWindow() 
     {
         window_.clear();
-        for (const auto texture: textures_)
-        {
-            window_.draw(*texture);
-        }
+        std::for_each(textures_.cbegin(), textures_.cend(), 
+            [&window = window_](const auto &texture) { window.draw(*texture); }); // Check if faster or at least as fast as for loop
         window_.display();
     }
 
-    WindowManager(const uint16_t width, const uint16_t heigth, const char* title, const uint8_t FPS=30)
-        : window_{sf::VideoMode(width, heigth), sf::String(title)}
+    WindowManager(const uint16_t width, const uint16_t heigth, const char* title, const uint8_t FPS=30):
+            window_{sf::VideoMode(width, heigth), sf::String(title)}
     {
         window_.setFramerateLimit(FPS);
     }

@@ -1,7 +1,7 @@
 #ifndef CAR_MODEL_H
 #define CAR_MODEL_H
 
-#include <memory.h>
+#include <memory>
 #include <SFML/Graphics.hpp>
 
 #include "engine/physical_objects/physical_model/hdr/physical_model.h"
@@ -12,14 +12,16 @@ class IModel
 {
 protected:
     sf::Texture texture_;
-    sf::Sprite sprite_;
+    std::shared_ptr<sf::Sprite> sprite_{std::make_shared<sf::Sprite>()};
     // PhysicalModel p_model_;
     // CollisionModel c_model_;
 
 public:
-    const sf::Sprite& getSprite() const noexcept { return sprite_; }
-    void setPose(const sf::Vector2f& pose) { sprite_.setOrigin(pose); };
-    // virtual void initializePhysicalModel() = 0;
+    const std::shared_ptr<sf::Sprite>& getSprite() const noexcept { return sprite_; }
+    void setPose(const sf::Vector2f& pose) { sprite_->setOrigin(pose); }
+    const sf::Vector2f& getOrigin() { return sprite_->getPosition(); }
+    const float& getOrientation() { return sprite_->getAngle(); }
+
     virtual ~IModel() = default;
 };
 

@@ -6,6 +6,7 @@ cc_binary(
     deps = [
         "//:imgui",
         "//engine/window_manager",
-        "//engine/models/car_model"
+        "//engine/models/car_model",
+        "//engine/sensors/lidar"
     ],
 )
