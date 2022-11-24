@@ -1,4 +1,6 @@
 #include "engine/sensors/lidar/hdr/lidar.h"
+#include "engine/physics/collision_model/hdr/collision_model.h"
+#include "engine/math/hdr/algebra.h"
 #include <iostream>
 #include <cmath>
 
@@ -44,5 +46,6 @@ void Lidar::updateBeams()
         *beam = new_beam;
     }
 }
+
 
 } // namespace sensor

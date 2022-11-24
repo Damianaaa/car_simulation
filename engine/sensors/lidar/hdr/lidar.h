@@ -1,9 +1,9 @@
 #ifndef ENGINE_SENSOR_LIDAR_LIDAR_H
 #define ENGINE_SENSOR_LIDAR_LIDAR_H
+
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <vector>
-#include <math.h>
 
 namespace sensor
 {

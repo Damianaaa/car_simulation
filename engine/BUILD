@@ -7,6 +7,7 @@ cc_binary(
         "//:imgui",
         "//engine/window_manager",
         "//engine/models/car_model",
-        "//engine/sensors/lidar"
+        "//engine/sensors/lidar",
+        "//engine/physics/collision_model:collision"
     ],
 )
