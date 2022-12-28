@@ -18,6 +18,8 @@ float getDistanceBetweenPointsSquared(const sf::Vector2f& p1, const sf::Vector2f
 
 sf::Vector2f getClosestPoint(const sf::Vector2f& reference_point, const std::vector<sf::Vector2f>& points);
 
+bool checkBounds(const sf::Vector2f& ref_point, const sf::Vector2f& start, const sf::Vector2f& end);
+
 }  // math
 
 #endif

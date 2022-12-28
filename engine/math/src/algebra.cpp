@@ -1,5 +1,8 @@
 #include "engine/math/hdr/algebra.h"
+#include "engine/math/hdr/numerical_utilities.h"
+#include <iostream>
 #include <algorithm>
+#include <utility>
 #include <math.h>
 
 std::ostream& operator<<(std::ostream& os, const sf::Vector2f& point)
@@ -33,6 +36,16 @@ sf::Vector2f getClosestPoint(const sf::Vector2f& reference_point, const std::vec
             return getDistanceBetweenPointsSquared(reference_point, p1) < getDistanceBetweenPointsSquared(reference_point, p2);
         }
     );
-} 
+}
+
+bool checkBounds(const sf::Vector2f& ref_point, const sf::Vector2f& start, const sf::Vector2f& end)
+{
+    const auto [x_min, x_max] = end.x >= start.x ? std::pair{start.x, end.x} : std::pair{end.x, start.x};
+    const auto [y_min, y_max] = end.y >= start.y ? std::pair{start.y, end.y} : std::pair{end.y, start.y};
+    const auto [x_ref, y_ref] = ref_point;
+    const bool in_bound{fGEqual(x_ref, x_min) && fLEqual(x_ref, x_max) && fGEqual(y_ref, y_min) && fLEqual(y_ref, y_max)};
+    return in_bound;
+}
+
 
 }

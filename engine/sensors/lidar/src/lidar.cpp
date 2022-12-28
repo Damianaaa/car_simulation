@@ -35,14 +35,22 @@ void Lidar::updateBeams()
 {
     sf::VertexArray new_beam(sf::Lines, 2);
     new_beam[0] = origin_;
+    const auto cm = physics::getCollisionManager();
+
     // More like a fancy way to do that, just out of curiocity 
     auto idx_increment = [i = 0]() mutable { return i++; };
+    // Make parallel if possible (it should be), easy way would be to use execution policy on the std::for_each.
     for (const auto& beam: beams_)
     {
         // -heading should be probably somehow connected to initial car orientation
         const float beam_angle = -heading_ + idx_increment() * angle_increment_;
         const float angle_rad = ((-beam_angle) / 180) * M_PI;
-        new_beam[1] = origin_ + sf::Vector2<float>(100 * cos(angle_rad), 100 * sin(angle_rad));
+        physics::LineDescription ld{origin_, origin_ + sf::Vector2<float>(500 * cos(angle_rad), 500 * sin(angle_rad))};
+        const auto points = cm.getCollisions(ld);
+        if (points.size() == 0) // Always should find col
+            new_beam[1] = sf::Vector2f{0 ,0};
+        else 
+            new_beam[1] = math::getClosestPoint(origin_, points);
         *beam = new_beam;
     }
 }

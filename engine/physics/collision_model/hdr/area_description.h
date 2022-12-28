@@ -47,9 +47,10 @@ struct CircleDescription
     const float radius;
 };
 
+// Check for the perpendicularity? Creation safety should be improved. 
 struct RectangleDescription
 {
-    RectangleDescription(const std::array<LineDescription, 4>& lines): lines_{lines} {}
+    RectangleDescription(const std::array<LineDescription, 4>&& lines): lines_{std::move(lines)} {}
     RectangleDescription() = delete;
 
     std::optional<sf::Vector2f> getIntersectionPoint(const LineDescription& line) const;

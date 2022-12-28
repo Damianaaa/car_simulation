@@ -85,7 +85,9 @@ class CollisionManager
         {
           const auto intersection_point = area.getIntersectionPoint(collision);
           if (intersection_point)
+          {
             intersection_points.push_back(intersection_point.value());
+          }
         }, elem.second);
       }
       for (const auto& elem: static_collisions_)

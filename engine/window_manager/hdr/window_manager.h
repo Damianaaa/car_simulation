@@ -6,6 +6,11 @@
 #include <type_traits>
 #include <SFML/Graphics.hpp>
 
+/**
+ * @brief Class responsible for window management and for now most of the event handling
+ * @todo On-click actions, for now texture creation (with support of the side bar manager).
+ * 
+ */
 class WindowManager
 {
 private:
@@ -40,6 +45,10 @@ public:
         }
     }
 
+    /**
+     * @brief Updates the window and renders all the textures. In the future would be nice to
+     * render only the changing area (e.g. around the model)
+     */
     void updateWindow() 
     {
         window_.clear();

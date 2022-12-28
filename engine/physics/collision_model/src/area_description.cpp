@@ -1,5 +1,6 @@
 #include "engine/math/hdr/algebra.h"
 #include "engine/math/hdr/mathematical_analysis.h"
+#include "engine/math/hdr/numerical_utilities.h"
 #include "engine/physics/collision_model/hdr/area_description.h"
 
 namespace physics
@@ -15,6 +16,7 @@ std::optional<sf::Vector2f> getIntersectionPoint(const T& line_1, const U& line_
 /**
      * @brief Get the intersection point of two lines
      * @note Equations from: https://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
+     * Probably because of some missunderstanding it does not work in the end. Used different approach but may be needed in the future
      * 
      * @param line 
      * @return std::optional<sf::Vector2f> Intersection point or std::nullopt if id does not exist
@@ -22,18 +24,33 @@ std::optional<sf::Vector2f> getIntersectionPoint(const T& line_1, const U& line_
 template<>
 std::optional<sf::Vector2f> getIntersectionPoint<LineDescription, LineDescription>(const LineDescription& line_1, const LineDescription& line_2)
 {
-    const float denominator = math::crossProduct(line_2.direction_vector, line_1.direction_vector);
-    if (denominator == 0)
-        return std::nullopt; 
-    const float scalar_1 = math::crossProduct((line_2.start_point - line_1.start_point), line_1.direction_vector)
-        / denominator;
-    const float scalar_2 = math::crossProduct((line_2.start_point - line_1.start_point), line_2.direction_vector) 
-        / denominator;
-    if ((scalar_1 >= 0 && scalar_1 <= 1) && (scalar_1 >= 0 && scalar_1 <= 1))
+    const float a1 = line_1.end_point.y - line_1.start_point.y;
+    const float b1 = line_1.start_point.x - line_1.end_point.x;
+    const float c1 = a1 * line_1.start_point.x + b1 * line_1.start_point.y;
+
+    const float a2 = line_2.end_point.y - line_2.start_point.y;
+    const float b2 = line_2.start_point.x - line_2.end_point.x;
+    const float c2 = a2 * line_2.start_point.x + b2 * line_2.start_point.y;
+
+    const float determinant = a1 * b2 - a2 * b1;
+    if (math::fEqual(determinant, 0.f)) 
     {
-        return line_1.start_point + scalar_2 * line_1.direction_vector;
+        // The lines are parallel
+        return std::nullopt;
+    } 
+    else 
+    {    
+        sf::Vector2f intersection_point{(b2 * c1 - b1 * c2) / determinant, (a1 * c2 - a2 * c1) / determinant};
+        if (math::checkBounds(intersection_point, line_1.start_point, line_1.end_point) && 
+            math::checkBounds(intersection_point, line_2.start_point, line_2.end_point))
+        {
+            return intersection_point;
+        }
+        else
+        { 
+            return std::nullopt;
+        }
     }
-    return std::nullopt;
 }
 
 template<>
@@ -75,15 +92,16 @@ std::optional<sf::Vector2f> getIntersectionPoint<LineDescription, CircleDescript
     for (const float x: solutions_x)
     {
         const float coeff = (x - line.start_point.x) / line.direction_vector.x;
-        if (coeff >= 0 && coeff <= 1)
+        if (math::fGEqual(coeff, 0.f) && math::fLEqual(coeff, 1.f))
         {                
             const float y = line.coeff_a * x + line.coeff_b;
             intersection_points.push_back({x, y});
         }
     }
-
     if (intersection_points.size() > 0)
+    {
         return math::getClosestPoint(line.start_point, intersection_points);
+    }
     return std::nullopt;
 }
 
@@ -95,7 +113,7 @@ std::optional<sf::Vector2f> getIntersectionPoint(const T& other_type, const Line
 
 void LineDescription::calculateCoefficients()
 {
-    coeff_a = direction_vector.x / direction_vector.y;
+    coeff_a = direction_vector.x != 0 ? direction_vector.y / direction_vector.x : 0;
     coeff_b = start_point.y - (coeff_a * start_point.x);
 }
 
