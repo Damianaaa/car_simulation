@@ -7,7 +7,8 @@ bool CollisionManager::checkIfKeyExist(const char* key, const CollisionType type
 {
     const auto& collisions = (type == CollisionType::Dynamic) ? dynamic_collisions_ : static_collisions_;
     return std::any_of(collisions.cbegin(), collisions.cend(), 
-        [key](const std::pair<const char* const, Area>& collision){ return key == collision.first; }); 
+        [key](const std::pair<const char* const, Area>& collision){ 
+          return key == collision.first; }); 
 }
 
 std::unordered_map<const char*, Area> CollisionManager::static_collisions_{};

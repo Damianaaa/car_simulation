@@ -51,6 +51,12 @@ struct CircleDescription
 struct RectangleDescription
 {
     RectangleDescription(const std::array<LineDescription, 4>&& lines): lines_{std::move(lines)} {}
+    RectangleDescription(const sf::Vector2f& position, const sf::Vector2f& size): lines_{{
+        {position, sf::Vector2f{position.x + size.x, position.y}},
+        {position, sf::Vector2f{position.x, position.y + size.y}},
+        {sf::Vector2f{position.x + size.x, position.y}, position + size},
+        {sf::Vector2f{position.x, position.y + size.y}, position + size}
+    }} {}
     RectangleDescription() = delete;
 
     std::optional<sf::Vector2f> getIntersectionPoint(const LineDescription& line) const;
