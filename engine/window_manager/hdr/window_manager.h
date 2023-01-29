@@ -33,6 +33,8 @@ public:
     bool isOpen() { return window_.isOpen() && !isClosed(); }
     inline void addTexture(const std::shared_ptr<sf::Drawable> texture) { textures_.emplace_back(texture); }
 
+    const sf::RenderWindow& getWindow() { return window_; }
+
     template<typename T>
     void addDrawableVector(const std::vector<std::shared_ptr<T>>& drawables) 
     {
@@ -63,5 +65,8 @@ public:
         window_.setFramerateLimit(FPS);
     }
     WindowManager() = delete;
+    ~WindowManager() {
+        window_.close();
+    }
 };
 #endif

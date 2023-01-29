@@ -24,10 +24,10 @@ enum class CollisionType{Dynamic, Static};
 
 class CollisionManager
 {
-    static std::unordered_map<const char*, Area> static_collisions_;
-    static std::unordered_map<const char*, Area> dynamic_collisions_;
+    static std::unordered_map<std::string, Area> static_collisions_;
+    static std::unordered_map<std::string, Area> dynamic_collisions_;
 
-    static bool checkIfKeyExist(const char* key, const CollisionType type);
+    static bool checkIfKeyExist(const std::string& key, const CollisionType type);
 
     CollisionManager() = default;
   public: // Should be private
@@ -35,7 +35,7 @@ class CollisionManager
     friend CollisionManager& getCollisionManager();
 
     template<class T>
-    static void addDynamicCollision(const char* key, const T& collision)
+    static void addDynamicCollision(const std::string& key, const T& collision)
     {
       if (!checkIfKeyExist(key, CollisionType::Dynamic))
       {
@@ -49,7 +49,7 @@ class CollisionManager
     }
 
     template<class T>
-    static void addStaticCollision(const char* key, const T& collision)
+    static void addStaticCollision(const std::string& key, const T& collision)
     {
       if (!checkIfKeyExist(key, CollisionType::Static))
       {

@@ -17,6 +17,8 @@ int main()
     auto cm = getCollisionManager();
     // Relative path
     CarModel car{"/home/damian/cpp_projects/SFML_engine/engine/images/car.png"};
+    // +200 for side bar for now
+    WindowManager manager{constants::window_width + 200, constants::window_heigth, "Okienko"};
 
     RectangleDescription map_borders{
         {LineDescription{{0, 0}, {0, constants::window_heigth}},
@@ -25,25 +27,24 @@ int main()
         LineDescription{{constants::window_width, 0}, {constants::window_width, constants::window_heigth}}}
     };
     cm.addStaticCollision("borders", map_borders);
-    window_manager::CircleTexture circle_1(sf::Vector2f{100.f, 100.f}, 30.0f, "c1");
-    window_manager::CircleTexture circle_2(sf::Vector2f{200.f, 200.f}, 30.0f, "c2");
-    window_manager::CircleTexture circle_3(sf::Vector2f{300.f, 300.f}, 30.0f, "c3");
+    window_manager::SideBar side_bar{sf::Vector2f{}, sf::Vector2f{200.f, 400.f}, manager};
+    side_bar.addStateObserver<float>(sf::Vector2f{450, 150}, sf::Vector2f{100, 25}, 
+        [](const float& ref_val){ return std::to_string(ref_val); }, "x", car.getOrigin().x
+    );
+    side_bar.addStateObserver<float>(sf::Vector2f{450, 200}, sf::Vector2f{100, 25}, 
+        [](const float& ref_val){ return std::to_string(ref_val); }, "y", car.getOrigin().y
+    );
+    side_bar.addShapeAdder(sf::Vector2i{100, 100}, manager);
 
-    window_manager::RectangleTexture rect_1(sf::Vector2f{50.f, 200.f}, sf::Vector2f{50.f, 50.f}, "r1");
 
     sensor::Lidar lidar{10, car.getOrientation(), car.getOrigin()};
-    // +200 for side bar for now
-    WindowManager manager{constants::window_width + 200, constants::window_heigth, "Okienko"};
-    manager.addTexture(circle_1.getDrawable());
-    manager.addTexture(circle_2.getDrawable());
-    manager.addTexture(rect_1.getDrawable());
-    manager.addTexture(circle_3.getDrawable());
 
     manager.addDrawableVector(lidar.getBeams());
     manager.addTexture(car.getSprite());
     while(manager.isOpen())
     {
         manager.updateWindow();
+        side_bar.update();
         car.update();
         lidar.update();
     }
