@@ -6,6 +6,7 @@ cc_library(
     ],
     hdrs = [
         "hdr/algebra.h",
+        "hdr/geometric_transformations.h",
         "hdr/mathematical_analysis.h",
         "hdr/numerical_utilities.h"
     ],
