@@ -25,7 +25,6 @@ void Lidar::update()
 void Lidar::createBeams(const unsigned int number_of_beams)
 {
     beams_.reserve(number_of_beams);
-    // probably should be in initialization list
     for (unsigned int i = 0; i < number_of_beams; ++i)
         beams_.emplace_back(std::make_shared<sf::VertexArray>());
 }

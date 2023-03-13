@@ -25,7 +25,7 @@ class TextureAdder
     std::unique_ptr<Button> left_switch_, right_switch_; // vector off buttons will probably make it a bit clearer
     std::unique_ptr<StateButton> state_switch_;
     std::unique_ptr<ShapeSlider> shape_slider_;
-    WindowManager& window_manager_; // Singleton seems like a good idea in this case but what do I know
+    WindowManager& window_manager_; 
     bool on_hold_{false};
     std::vector<std::unique_ptr<ISimpleTexture>> created_textures;
 
