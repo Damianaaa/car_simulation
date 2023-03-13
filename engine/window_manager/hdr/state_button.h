@@ -9,6 +9,8 @@
 
 namespace window_manager
 {
+constexpr const char* on_label = ": ON";
+constexpr const char* off_label = ": OFF";
 
 class StateButton: public Button
 {
@@ -17,10 +19,11 @@ class StateButton: public Button
 
 public:
     template <typename... Args>
-    StateButton(Args&&... args) : Button(std::forward<Args>(args)...) {
+    StateButton(Args&&... args) : Button(std::forward<Args>(args)...)
+    {
         const float current_width = text_->getGlobalBounds().width;
         current_text = text_->getString().toAnsiString();
-        text_->setString(current_text + ": OFF");
+        text_->setString(current_text + off_label);
         
         const float new_width = text_->getGlobalBounds().width;
         text_->move({(new_width - current_width) / (-2.f), 0});
@@ -29,7 +32,7 @@ public:
     void onClick() override
     {
         state = !state;
-        const std::string state_description = state ? ": ON" : ": OFF";
+        const std::string state_description{state ? on_label : off_label};
         text_->setString(current_text + state_description);
         Button::onClick();
     }
