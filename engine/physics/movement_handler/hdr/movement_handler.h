@@ -22,7 +22,7 @@ class IMovementHandler
   public:
     explicit IMovementHandler(sf::Sprite& sprite): sprite_(sprite) {}
     virtual ~IMovementHandler() = default;
-    IMovementHandler(const IMovementHandler& rhs) = delete; // Read whether it deletes move constructor as well
+    IMovementHandler(const IMovementHandler& rhs) = delete;
     void operator = (const IMovementHandler& rhs) = delete;
 
     virtual void update() = 0;
@@ -34,6 +34,7 @@ class CarMovementHandler : public IMovementHandler
     float angular_increment_;
     float calculateRotation(const TurnDirection dir) const override;
     sf::Vector2<float> calculateDisplacement(const MovementDirection dir) const override;
+    bool checkCollision(const sf::Vector2f displacement, const float rotation) const;
 
 public:
     explicit CarMovementHandler(
