@@ -3,16 +3,16 @@
 namespace physics
 {
 
-bool CollisionManager::checkIfKeyExist(const std::string& key, const CollisionType type) 
+bool CollisionManager::checkIfKeyExist(const std::string& key) 
 {
-    const auto& collisions = (type == CollisionType::Dynamic) ? dynamic_collisions_ : static_collisions_;
+    //(type == CollisionType::Dynamic) ? dynamic_collisions_ : static_collisions_;
+    const auto& collisions = static_collisions_; 
     return std::any_of(collisions.cbegin(), collisions.cend(), 
         [key](const std::pair<std::string, Area>& collision){ 
           return key == collision.first; }); 
 }
 
 std::unordered_map<std::string, Area> CollisionManager::static_collisions_{};
-std::unordered_map<std::string, Area> CollisionManager::dynamic_collisions_{};
 
 CollisionManager& getCollisionManager()
 {

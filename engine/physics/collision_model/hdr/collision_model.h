@@ -20,38 +20,18 @@ Ok so for now:
 - How to predict collision before they occure in this setup 
 - How to omit some models like e.g. when we check collisions with lidar, we wouldn't like to detect collision with the ego
 */
-enum class CollisionType{Dynamic, Static};
+// enum class CollisionType{Dynamic, Static};
 
 class CollisionManager
 {
-    static std::unordered_map<std::string, Area> static_collisions_;
-    static std::unordered_map<std::string, Area> dynamic_collisions_;
-
-    static bool checkIfKeyExist(const std::string& key, const CollisionType type);
-
-    CollisionManager() = default;
   public: // Should be private
     ~CollisionManager() = default;
     friend CollisionManager& getCollisionManager();
 
     template<class T>
-    static void addDynamicCollision(const std::string& key, const T& collision)
+    void addStaticCollision(const std::string& key, const T& collision)
     {
-      if (!checkIfKeyExist(key, CollisionType::Dynamic))
-      {
-        dynamic_collisions_.emplace(key, collision);
-
-      }
-      else
-      {
-        std::cerr << "Given key: '" << key << "' is already assign to one of the dynamic collisions.\n";
-      }
-    }
-
-    template<class T>
-    static void addStaticCollision(const std::string& key, const T& collision)
-    {
-      if (!checkIfKeyExist(key, CollisionType::Static))
+      if (!checkIfKeyExist(key))
       {
         static_collisions_.emplace(key, collision);
       }
@@ -61,13 +41,9 @@ class CollisionManager
       }
     }
 
-    // static std::vector<sf::Vector2f> getCollisions(const char* key)
+    // std::vector<sf::Vector2f> getCollisions(const char* key)
     // {
-    //   if (checkIfKeyExist(key, CollisionType::Dynamic))
-    //   {
-    //     return getCollisions(dynamic_collisions_[key]); // To nie zadziałą na ten moment
-    //   }
-    //   else if (checkIfKeyExist(key, CollisionType::Static))
+    //   if (checkIfKeyExist(key))
     //   {
     //     return getCollisions(static_collisions_[key]);
     //   }
@@ -75,21 +51,9 @@ class CollisionManager
     // }
 
     template<class T> // Line etc.
-    static std::vector<sf::Vector2f> getCollisions(const T& collision)
+    std::vector<sf::Vector2f> getCollisions(const T& collision) const
     {
       std::vector<sf::Vector2f> intersection_points{};
-
-      for (const auto& elem: dynamic_collisions_)
-      {
-        std::visit([&intersection_points, &collision](const auto& area)
-        {
-          const auto intersection_point = area.getIntersectionPoint(collision);
-          if (intersection_point)
-          {
-            intersection_points.push_back(intersection_point.value());
-          }
-        }, elem.second);
-      }
       for (const auto& elem: static_collisions_)
       {
         std::visit([&intersection_points, &collision](const auto& area)
@@ -102,6 +66,12 @@ class CollisionManager
       return intersection_points;
     }
   
+  private:
+    CollisionManager() = default;
+
+    bool checkIfKeyExist(const std::string& key);
+
+    static std::unordered_map<std::string, Area> static_collisions_;
 };
 
 CollisionManager& getCollisionManager();
