@@ -105,10 +105,55 @@ std::optional<sf::Vector2f> getIntersectionPoint<LineDescription, CircleDescript
     return std::nullopt;
 }
 
+template<>
+std::optional<sf::Vector2f> getIntersectionPoint<RectangleDescription, CircleDescription>(const RectangleDescription& rect, const CircleDescription& circle)
+{
+    std::vector<sf::Vector2f> intersection_points{};
+    for (auto& line: rect.getLines())
+    {
+        const auto i_p = line.getIntersectionPoint(circle);
+        if (i_p.has_value())
+            intersection_points.push_back(i_p.value());
+    }
+    if (intersection_points.empty())
+        return std::nullopt;
+    return intersection_points.front();
+}
+
+template<>
+std::optional<sf::Vector2f> getIntersectionPoint<RectangleDescription, RectangleDescription>(const RectangleDescription& rect_1, const RectangleDescription& rect_2)
+{
+    std::vector<sf::Vector2f> intersection_points{};
+    for (const auto& line_1: rect_1.getLines())
+    {
+        for (auto& line_2: rect_2.getLines())
+        {
+            const auto i_p = line_1.getIntersectionPoint(line_2);
+            if (i_p.has_value())
+                intersection_points.push_back(i_p.value());
+        }
+    }
+    if (intersection_points.empty())
+        return std::nullopt;
+    return intersection_points.front();
+}
+
 template<class T>
 std::optional<sf::Vector2f> getIntersectionPoint(const T& other_type, const LineDescription& line)
 {
     return getIntersectionPoint<LineDescription, T>(line, other_type);
+}
+
+template<>
+std::optional<sf::Vector2f> getIntersectionPoint(const RectangleDescription& other_type, const LineDescription& line)
+{
+    return getIntersectionPoint<LineDescription, RectangleDescription>(line, other_type);
+}
+
+template<class T>
+std::optional<sf::Vector2f> getIntersectionPoint(const T& other_type, const RectangleDescription& rect)
+{
+    return getIntersectionPoint<RectangleDescription, T>(rect, other_type);
 }
 
 void LineDescription::calculateCoefficients()
@@ -137,9 +182,24 @@ std::optional<sf::Vector2f> CircleDescription::getIntersectionPoint(const LineDe
     return ::physics::getIntersectionPoint(*this, line);
 }
 
+std::optional<sf::Vector2f> CircleDescription::getIntersectionPoint(const RectangleDescription& rect) const
+{
+    return ::physics::getIntersectionPoint(*this, rect);
+}
+
 std::optional<sf::Vector2f> RectangleDescription::getIntersectionPoint(const LineDescription& line) const
 {
     return ::physics::getIntersectionPoint(*this, line);
+}
+
+std::optional<sf::Vector2f> RectangleDescription::getIntersectionPoint(const CircleDescription& circle) const
+{
+    return ::physics::getIntersectionPoint(*this, circle);
+}
+
+std::optional<sf::Vector2f> RectangleDescription::getIntersectionPoint(const RectangleDescription& rect) const
+{
+    return ::physics::getIntersectionPoint(*this, rect);
 }
 
 

@@ -43,6 +43,8 @@ struct CircleDescription
 
     std::optional<sf::Vector2f> getIntersectionPoint(const LineDescription& line) const;
 
+    std::optional<sf::Vector2f> getIntersectionPoint(const RectangleDescription& rect) const;
+
     const sf::Vector2f center_point;
     const float radius;
 };
@@ -60,6 +62,10 @@ struct RectangleDescription
     RectangleDescription() = delete;
 
     std::optional<sf::Vector2f> getIntersectionPoint(const LineDescription& line) const;
+
+    std::optional<sf::Vector2f> getIntersectionPoint(const CircleDescription& line) const;
+
+    std::optional<sf::Vector2f> getIntersectionPoint(const RectangleDescription& rect) const;
 
     const std::array<LineDescription, 4>& getLines() const { return lines_; }
     const std::array<LineDescription, 4> lines_;
